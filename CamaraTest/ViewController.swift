@@ -30,6 +30,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         myImage.image = UIImage(named: "heart")
+        getUserPreferences()
     }
     override func viewWillAppear(animated: Bool) {
         myImage.reloadInputViews()
@@ -42,14 +43,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        let image = info["UIImagePickerControllerOriginalImage"]
-        self.myImage.image = image as? UIImage
+        let image = info["UIImagePickerControllerOriginalImage"] as! UIImage
+        self.myImage.image = image
 
         UIImageWriteToSavedPhotosAlbum(self.myImage.image!, nil, nil, nil)
 //
         self.dismissViewControllerAnimated(true, completion: nil)
-        
+        saveSelectedImage(image)
     }
+    
+    
     
 //    func imagePicwkerController(picker: UIImagePickerController,didFinishPickingMediaWithInfo info: [String : AnyObject]) {
 //        
@@ -68,15 +71,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 //        let data = UIImageJPEGRepresentation(image, 0.9)
 //        data?.writeToFile(path!, atomically: true)
 //        self.dismissViewControllerAnimated(true, completion: nil)
-//
+//        saveSelectedImage(image)
 //    }
     
     
     
     
+    func saveSelectedImage(image : UIImage) {
+        myImage.image = image
+        
+        // Save image to NSUserDefaults
+        let prefs = NSUserDefaults.standardUserDefaults()
+        let imageData = UIImageJPEGRepresentation(image, 100)
+        prefs.setObject(imageData, forKey: ViewController.profileImage)
+            print("save photo~~~~")
+    }
+    static let profileImage = "PROFILE_IMAGE"
     
-    
-    
-
+    func getUserPreferences() {
+        let prefs = NSUserDefaults.standardUserDefaults()
+        if let imageData = prefs.objectForKey(ViewController.profileImage) as? NSData {
+            let storedImage = UIImage.init(data: imageData)
+            myImage.image = storedImage
+        }
+    }
 }
 
