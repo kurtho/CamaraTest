@@ -10,7 +10,9 @@ import UIKit
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let picker = UIImagePickerController()
-    
+
+    static let profileImage = "PROFILE_IMAGE"
+
     
     
     
@@ -22,7 +24,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func pickAImage(sender: AnyObject) {
-
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum
+        imagePicker.allowsEditing = false
+        self.presentViewController(imagePicker, animated: true, completion: nil)
+        
         
     }
     
@@ -52,6 +59,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         saveSelectedImage(image)
     }
     
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+        saveSelectedImage(image)
+    }
     
     
 //    func imagePicwkerController(picker: UIImagePickerController,didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -59,9 +70,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 //        let image = info["UIImagePickerControllerOriginalImage"] as! UIImage
 //        self.myImage.image = image
 //        UIImageWriteToSavedPhotosAlbum(self.myImage.image!, nil, nil, nil)
-//
 //        let paths =
-//            
 //            NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
 //        let documentsDirectory = paths.first
 //        let interval = NSDate.timeIntervalSinceReferenceDate()
@@ -86,7 +95,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         prefs.setObject(imageData, forKey: ViewController.profileImage)
             print("save photo~~~~")
     }
-    static let profileImage = "PROFILE_IMAGE"
     
     func getUserPreferences() {
         let prefs = NSUserDefaults.standardUserDefaults()
